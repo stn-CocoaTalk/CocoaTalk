@@ -1,5 +1,7 @@
 package com.stn.cocoatalk.di
 
+import com.stn.cocoatalk.data.remote.LoginService
+import com.stn.cocoatalk.data.remote.LoginServiceImpl
 import com.stn.cocoatalk.feature_chat.data.remote.ChatSocketService
 import com.stn.cocoatalk.feature_chat.data.remote.ChatSocketServiceImpl
 import com.stn.cocoatalk.feature_chat.data.remote.MessageService
@@ -42,5 +44,11 @@ object AppModule {
     @Singleton
     fun provideChatSocketService(client: HttpClient): ChatSocketService {
         return ChatSocketServiceImpl(client)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoginService(client: HttpClient): LoginService {
+        return LoginServiceImpl(client)
     }
 }
