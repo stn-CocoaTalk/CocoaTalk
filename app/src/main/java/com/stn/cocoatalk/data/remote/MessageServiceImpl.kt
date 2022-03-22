@@ -1,7 +1,7 @@
-package com.stn.cocoatalk.feature_chat.data.remote
+package com.stn.cocoatalk.data.remote
 
-import com.stn.cocoatalk.feature_chat.data.remote.dto.MessageDto
-import com.stn.cocoatalk.feature_chat.domain.model.Message
+import com.stn.cocoatalk.data.remote.dto.MessageDto
+import com.stn.cocoatalk.domain.model.Message
 import io.ktor.client.*
 import io.ktor.client.request.*
 

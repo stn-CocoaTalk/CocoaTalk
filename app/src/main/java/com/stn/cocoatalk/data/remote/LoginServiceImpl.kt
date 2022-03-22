@@ -1,79 +1,42 @@
 package com.stn.cocoatalk.data.remote
 
-import com.stn.cocoatalk.data.remote.dto.PostRequest
-import com.stn.cocoatalk.domail.model.User
+import com.stn.cocoatalk.data.remote.dto.UserDto
+import com.stn.cocoatalk.domain.model.User
+import com.stn.cocoatalk.util.Resource
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.http.auth.AuthScheme.Bearer
 import io.ktor.http.cio.websocket.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
+import javax.inject.Inject
 
-class LoginServiceImpl(
+class LoginServiceImpl @Inject constructor(
     private val client: HttpClient
-): LoginService {
-    override suspend fun verifyCredentials(request: PostRequest): String? {
-        return try {
-            client.post<String> {
-                url(LoginService.Endpoints.VerifyUser.url)
-                contentType(ContentType.Application.Json)
-                body = request
-            }
-        } catch (e: RedirectResponseException) {
-            println("Error: ${e.response.status.description}")
-            ""
-        } catch (e: ClientRequestException) {
-            println("Error: ${e.response.status.description}")
-            ""
-        } catch (e: ServerResponseException) {
-            println("Error: ${e.response.status.description}")
-            ""
-        } catch (e: Exception) {
-            println("Error: ${e.message}")
-            ""
+    ): LoginService {
+
+    override suspend fun getUserByEmail(email: String): UserDto {
+        val request = UserDto(
+            id = "",
+            username = "",
+            email = email,
+            password = ""
+        )
+        return client.post {
+            url(LoginService.Endpoints.GetUserByEmail.url)
+            contentType(ContentType.Application.Json)
+            body = request
         }
     }
 
-    override suspend fun verityToken(token: String): String? {
-        return try {
-            client.request {
-                method = HttpMethod.Get
-                url(LoginService.Endpoints.VerifyToken.url)
-                headers {
-                    append(HttpHeaders.Authorization, "$Bearer $token")
-                }
-            }
-        } catch (e: RedirectResponseException) {
-            println("Error: ${e.response.status.description}")
-            ""
-        } catch (e: ClientRequestException) {
-            println("Error: ${e.response.status.description}")
-            ""
-        } catch (e: ServerResponseException) {
-            println("Error: ${e.response.status.description}")
-            ""
-        } catch (e: Exception) {
-            println("Error: ${e.message}")
-            ""
-        }
-    }
-
-    override suspend fun createUser(request: PostRequest) {
-        try {
-            client.post<String> {
-                url(LoginService.Endpoints.CreateUser.url)
-                contentType(ContentType.Application.Json)
-                body = request
-            }
-        } catch (e: RedirectResponseException) {
-            println("Error: ${e.response.status.description}")
-        } catch (e: ClientRequestException) {
-            println("Error: ${e.response.status.description}")
-        } catch (e: ServerResponseException) {
-            println("Error: ${e.response.status.description}")
-        } catch (e: Exception) {
-            println("Error: ${e.message}")
+    override suspend fun addUser(user: UserDto) {
+        client.post<Unit> {
+            url(LoginService.Endpoints.AddUser.url)
+            contentType(ContentType.Application.Json)
+            body = user
         }
     }
 }

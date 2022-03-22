@@ -1,4 +1,4 @@
-package com.stn.cocoatalk.presentation.initial
+package com.stn.cocoatalk.presentation.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import com.stn.cocoatalk.presentation.component.AccentText
 import com.stn.cocoatalk.presentation.component.SpanStyleText
 import com.stn.cocoatalk.presentation.component.StandardTextField
+import com.stn.cocoatalk.presentation.util.Error
 import com.stn.cocoatalk.presentation.util.Screen
 import com.stn.cocoatalk.ui.theme.PaddingLarge
 import com.stn.cocoatalk.ui.theme.PaddingMedium
@@ -20,7 +21,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun InitialScreen(
     navController: NavController,
-    viewModel: InitialViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -51,10 +52,10 @@ fun InitialScreen(
             AccentText(
                 text = "Continue",
                 onClick = {
-                    if (viewModel.validateInput()) {
+                    if(viewModel.verifyEmail()) {
                         navController.navigate("${Screen.LoginScreen.route}/${viewModel.inputText.value}")
                     } else {
-                        viewModel.showSnackBar()
+                        viewModel.showSnackBar(Error.EmailIsEmpty.message)
                     }
                 }
             )

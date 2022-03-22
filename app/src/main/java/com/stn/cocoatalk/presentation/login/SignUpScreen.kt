@@ -1,6 +1,5 @@
-package com.stn.cocoatalk.presentation.signup
+package com.stn.cocoatalk.presentation.login
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
@@ -17,12 +16,11 @@ import com.stn.cocoatalk.presentation.component.StandardTextField
 import com.stn.cocoatalk.presentation.util.Screen
 import com.stn.cocoatalk.ui.theme.PaddingMedium
 import com.stn.cocoatalk.ui.theme.PaddingSmall
-import timber.log.Timber
 
 @Composable
 fun SignUpScreen(
     navController: NavController,
-    viewModel: SignUpViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -73,7 +71,9 @@ fun SignUpScreen(
             AccentText(
                 text = "Continue",
                 onClick = {
-                    Log.d("LOGIN",viewModel.signUp())
+                    viewModel.signUp()
+                    navController.popBackStack()
+                    navController.navigate(Screen.InitialScreen.route)
                 }
             )
         }

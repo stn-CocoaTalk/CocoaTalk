@@ -1,22 +1,22 @@
 package com.stn.cocoatalk.data.remote
 
-import com.stn.cocoatalk.data.remote.dto.PostRequest
+import com.stn.cocoatalk.data.remote.dto.UserDto
+import com.stn.cocoatalk.domain.model.User
+import com.stn.cocoatalk.util.Constants
+import com.stn.cocoatalk.util.Resource
 
 interface LoginService {
 
-    suspend fun verifyCredentials(request: PostRequest): String?
-
-    suspend fun verityToken(token: String): String?
-
-    suspend fun createUser(request: PostRequest)
+    suspend fun getUserByEmail(email: String): UserDto
+    suspend fun addUser(user: UserDto)
 
     companion object {
-        const val BASE_URL = "http://172.30.1.40:8080"
+        const val BASE_URL = "http://${Constants.BASE_URL}"
     }
 
     sealed class Endpoints(val url: String) {
-        object VerifyUser: Endpoints("$BASE_URL/login")
+        object GetUserByEmail: Endpoints("$BASE_URL/login")
         object VerifyToken: Endpoints("$BASE_URL/token")
-        object CreateUser: Endpoints("$BASE_URL/signup")
+        object AddUser: Endpoints("$BASE_URL/signup")
     }
 }

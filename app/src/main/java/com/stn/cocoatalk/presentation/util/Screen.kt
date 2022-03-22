@@ -1,5 +1,7 @@
 package com.stn.cocoatalk.presentation.util
 
+import android.annotation.SuppressLint
+
 sealed class Screen(val route: String) {
     object SplashScreen: Screen("splash_screen")
     object InitialScreen: Screen("initial_screen")

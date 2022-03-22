@@ -1,4 +1,4 @@
-package com.plcoding.ktorandroidchat.presentation.username
+package com.stn.cocoatalk.presentation.username
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

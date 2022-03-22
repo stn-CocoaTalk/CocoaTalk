@@ -2,10 +2,15 @@ package com.stn.cocoatalk.di
 
 import com.stn.cocoatalk.data.remote.LoginService
 import com.stn.cocoatalk.data.remote.LoginServiceImpl
-import com.stn.cocoatalk.feature_chat.data.remote.ChatSocketService
-import com.stn.cocoatalk.feature_chat.data.remote.ChatSocketServiceImpl
-import com.stn.cocoatalk.feature_chat.data.remote.MessageService
-import com.stn.cocoatalk.feature_chat.data.remote.MessageServiceImpl
+import com.stn.cocoatalk.data.remote.ChatSocketService
+import com.stn.cocoatalk.data.remote.ChatSocketServiceImpl
+import com.stn.cocoatalk.data.remote.MessageService
+import com.stn.cocoatalk.data.remote.MessageServiceImpl
+import com.stn.cocoatalk.data.repository.CocoaRepositoryImpl
+import com.stn.cocoatalk.domain.repository.CocoaRepository
+import com.stn.cocoatalk.domain.usecase.AddUser
+import com.stn.cocoatalk.domain.usecase.CocoaUseCases
+import com.stn.cocoatalk.domain.usecase.GetUserByEmail
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,5 +55,20 @@ object AppModule {
     @Singleton
     fun provideLoginService(client: HttpClient): LoginService {
         return LoginServiceImpl(client)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRepository(loginService: LoginService): CocoaRepository {
+        return CocoaRepositoryImpl(loginService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUseCases(repository: CocoaRepository): CocoaUseCases {
+        return CocoaUseCases(
+            GetUserByEmail = GetUserByEmail(repository),
+            AddUser = AddUser(repository)
+        )
     }
 }

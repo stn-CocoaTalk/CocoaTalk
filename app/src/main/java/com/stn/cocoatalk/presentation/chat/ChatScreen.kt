@@ -1,4 +1,4 @@
-package com.stn.cocoatalk.feature_chat.presentation.chat
+package com.stn.cocoatalk.presentation.chat
 
 import android.widget.Toast
 import androidx.compose.foundation.background

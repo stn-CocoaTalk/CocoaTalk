@@ -1,12 +1,12 @@
-package com.stn.cocoatalk.feature_chat.presentation.chat
+package com.stn.cocoatalk.presentation.chat
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stn.cocoatalk.feature_chat.data.remote.ChatSocketService
-import com.stn.cocoatalk.feature_chat.data.remote.MessageService
+import com.stn.cocoatalk.data.remote.ChatSocketService
+import com.stn.cocoatalk.data.remote.MessageService
 import com.stn.cocoatalk.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

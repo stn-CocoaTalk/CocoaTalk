@@ -1,7 +1,7 @@
-package com.stn.cocoatalk.feature_chat.data.remote
+package com.stn.cocoatalk.data.remote
 
-import com.stn.cocoatalk.feature_chat.data.remote.dto.MessageDto
-import com.stn.cocoatalk.feature_chat.domain.model.Message
+import com.stn.cocoatalk.data.remote.dto.MessageDto
+import com.stn.cocoatalk.domain.model.Message
 import com.stn.cocoatalk.util.Resource
 import io.ktor.client.*
 import io.ktor.client.features.websocket.*
@@ -12,6 +12,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
+// Data Source (Data Layer)
 class ChatSocketServiceImpl(
     private val client: HttpClient
 ): ChatSocketService {

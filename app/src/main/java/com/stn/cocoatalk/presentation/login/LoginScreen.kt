@@ -1,10 +1,8 @@
 package com.stn.cocoatalk.presentation.login
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -12,13 +10,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.stn.cocoatalk.presentation.component.AccentText
 import com.stn.cocoatalk.presentation.component.StandardTextField
+import com.stn.cocoatalk.presentation.util.Error
+import com.stn.cocoatalk.presentation.util.Screen
 import com.stn.cocoatalk.ui.theme.PaddingMedium
 import com.stn.cocoatalk.ui.theme.PaddingSmall
+import com.stn.cocoatalk.ui.theme.TextWhite
+import com.stn.cocoatalk.ui.theme.Typography
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -28,10 +31,12 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
+    val state = viewModel.state.value
     val email = navBackStackEntry.arguments?.getString("current_user_email")
 
     LaunchedEffect(key1 = true) {
-        viewModel.state.collectLatest { message ->
+        viewModel.getUserByEmail(email!!)
+        viewModel.toast.collectLatest { message ->
             scaffoldState.snackbarHostState.showSnackbar(message)
         }
     }
@@ -39,40 +44,65 @@ fun LoginScreen(
     Scaffold(
         scaffoldState = scaffoldState
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = PaddingMedium),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
-                .fillMaxWidth()
+                    .fillMaxSize()
+                    .padding(horizontal = PaddingMedium),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Username")
-                Spacer(modifier = Modifier.height(PaddingSmall))
-                Text(
-                    text = "$email",
-                    style = TextStyle(textDecoration = TextDecoration.Underline)
+                state.currentUser?.let { user ->
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        item {
+                            Text(
+                                text = user.username,
+                                style = TextStyle(textDecoration = TextDecoration.Underline),
+                                fontWeight = Typography.body2.fontWeight,
+                                fontSize = 22.sp,
+                                color = TextWhite
+                            )
+                            Spacer(modifier = Modifier.height(PaddingSmall))
+                            Text(
+                                text = user.email,
+                                style = TextStyle(textDecoration = TextDecoration.Underline),
+                                fontWeight = Typography.body2.fontWeight,
+                                fontSize = 20.sp,
+                                color = TextWhite.copy(alpha = 0.8f)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(PaddingMedium))
+                    StandardTextField(
+                        text = viewModel.password.value,
+                        hint = "Password",
+                        onValueChange = {
+                            viewModel.passwordChange(it)
+                        },
+                        keyboardType = KeyboardType.Password
+                    )
+                    Spacer(modifier = Modifier.height(PaddingMedium))
+                    AccentText(
+                        text = "Continue",
+                        onClick = {
+                            if(viewModel.verifyPassword()) {
+                                navController.navigate(Screen.ChatListScreen.route)
+                            } else {
+                                viewModel.showSnackBar(Error.InvalidPassword.message)
+                            }
+                        }
+                    )
+                }
+            }
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
-            Spacer(modifier = Modifier.height(PaddingSmall))
-            StandardTextField(
-                text = viewModel.password.value,
-                hint = "Password",
-                onValueChange = {
-                    viewModel.passwordChange(it)
-                },
-                keyboardType = KeyboardType.Password
-            )
-            Spacer(modifier = Modifier.height(PaddingSmall))
-            AccentText(
-                text = "Continue",
-                onClick = {
-                    viewModel.login(email as String)
-                }
-            )
         }
     }
 }

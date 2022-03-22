@@ -1,4 +1,4 @@
-package com.stn.cocoatalk.feature_chat.domain.model
+package com.stn.cocoatalk.domain.model
 
 data class Message(
     val text: String,

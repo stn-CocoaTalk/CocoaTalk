@@ -1,4 +1,4 @@
-package com.plcoding.ktorandroidchat.presentation.username
+package com.stn.cocoatalk.presentation.username
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button

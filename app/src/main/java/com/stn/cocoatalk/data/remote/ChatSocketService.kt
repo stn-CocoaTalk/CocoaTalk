@@ -1,6 +1,8 @@
-package com.stn.cocoatalk.feature_chat.data.remote
+package com.stn.cocoatalk.data.remote
 
-import com.stn.cocoatalk.feature_chat.domain.model.Message
+import com.stn.cocoatalk.data.remote.dto.MessageDto
+import com.stn.cocoatalk.domain.model.Message
+import com.stn.cocoatalk.util.Constants
 import com.stn.cocoatalk.util.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -17,7 +19,7 @@ interface ChatSocketService {
     suspend fun closeSession()
 
     companion object {
-        const val BASE_URL = "ws://172.30.1.40:8080"
+        const val BASE_URL = "ws://${Constants.BASE_URL}"
     }
 
     sealed class Endpoints(val url: String) {

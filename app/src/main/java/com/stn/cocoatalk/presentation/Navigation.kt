@@ -6,9 +6,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.stn.cocoatalk.presentation.initial.InitialScreen
+import com.stn.cocoatalk.presentation.chat.ChatScreen
+import com.stn.cocoatalk.presentation.chatlist.ChatListScreen
+import com.stn.cocoatalk.presentation.login.InitialScreen
 import com.stn.cocoatalk.presentation.login.LoginScreen
-import com.stn.cocoatalk.presentation.signup.SignUpScreen
+import com.stn.cocoatalk.presentation.login.SignUpScreen
 import com.stn.cocoatalk.presentation.splash.SplashScreen
 import com.stn.cocoatalk.presentation.util.Screen
 
@@ -35,10 +37,10 @@ fun Navigation() {
             LoginScreen(navController, it)
         }
         composable(Screen.ChatListScreen.route) {
-
+            ChatListScreen(navController)
         }
         composable(Screen.ChatScreen.route) {
-
+            ChatScreen(username = "TEST")
         }
     }
 }
