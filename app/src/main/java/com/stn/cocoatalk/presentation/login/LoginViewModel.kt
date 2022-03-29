@@ -1,5 +1,6 @@
 package com.stn.cocoatalk.presentation.login
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -38,6 +39,12 @@ class LoginViewModel @Inject constructor(
     private val _state = mutableStateOf(AppState())
     val state: State<AppState> = _state
 
+    fun setStateAutorized() {
+        _state.value = state.value.copy(
+            authorized = true
+        )
+    }
+
     fun verifyEmail(): Boolean {
         return _inputText.value.isNotBlank()
     }
@@ -50,12 +57,13 @@ class LoginViewModel @Inject constructor(
                         currentUser = result.data,
                         isLoading = false
                     )
+                    _state.value.userIsNotExist()
                 }
                 is Resource.Error -> {
                     _state.value = AppState(
                         isLoading = false
                     )
-                    showSnackBar(result.message ?: Error.UnknownError.message)
+                    _toast.emit(result.message ?: Error.UnknownError.message)
                 }
                 is Resource.Loading -> {
                     _state.value = AppState(
@@ -80,12 +88,13 @@ class LoginViewModel @Inject constructor(
                         _state.value = AppState(
                             isLoading = false
                         )
+                        _toast.emit("Success!")
                     }
                     is Resource.Error -> {
                         _state.value = AppState(
                             isLoading = false
                         )
-                        showSnackBar(result.message ?: Error.UnknownError.message)
+                        _toast.emit(result.message ?: Error.UnknownError.message)
                     }
                     is Resource.Loading -> {
                         _state.value = AppState(
@@ -95,7 +104,9 @@ class LoginViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         } catch (e: InvalidUserException) {
-            showSnackBar(e.message ?: "")
+            viewModelScope.launch {
+                _toast.emit(e.message ?: "")
+            }
         }
     }
 

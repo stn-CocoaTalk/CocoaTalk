@@ -10,16 +10,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.stn.cocoatalk.presentation.component.AccentText
+import com.stn.cocoatalk.presentation.component.StandardTextField
+import com.stn.cocoatalk.ui.theme.PaddingSmall
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun UsernameScreen(
-    viewModel: UsernameViewModel = hiltViewModel(),
-    onNavigate: (String) -> Unit
+    navController: NavController,
+    viewModel: UsernameViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.onJoinChat.collectLatest { username ->
-            onNavigate("chat_screen/$username")
+            navController.navigate("chat_screen/$username")
         }
     }
 
@@ -32,20 +36,18 @@ fun UsernameScreen(
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.End
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TextField(
-                value = viewModel.usernameText.value,
-                onValueChange = viewModel::onUsernameChange,
-                placeholder = {
-                    Text(text = "Enter a username...")
-                },
-                modifier = Modifier.fillMaxWidth()
+            StandardTextField(
+                text = viewModel.usernameText.value,
+                hint = "Enter a username",
+                onValueChange = viewModel::onUsernameChange
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = viewModel::onJoinClick) {
-                Text(text = "Join")
-            }
+            Spacer(modifier = Modifier.height(PaddingSmall))
+            AccentText(
+                text = "Continue",
+                onClick = viewModel::onJoinClick
+            )
         }
     }
 }

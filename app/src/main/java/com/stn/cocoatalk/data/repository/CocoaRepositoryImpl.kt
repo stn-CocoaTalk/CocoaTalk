@@ -1,6 +1,8 @@
 package com.stn.cocoatalk.data.repository
 
+import com.stn.cocoatalk.data.remote.ChatSocketService
 import com.stn.cocoatalk.data.remote.LoginService
+import com.stn.cocoatalk.data.remote.MessageService
 import com.stn.cocoatalk.data.remote.dto.UserDto
 import com.stn.cocoatalk.domain.model.Message
 import com.stn.cocoatalk.domain.model.User
@@ -10,18 +12,24 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class CocoaRepositoryImpl @Inject constructor(
-    private val loginService: LoginService
+    private val loginService: LoginService,
+    private val messageService: MessageService,
+    private val chatSocketService: ChatSocketService
 ): CocoaRepository {
+    override suspend fun initSession(username: String) {
+        chatSocketService.initSession(username)
+    }
+
     override suspend fun sendMessage(message: String) {
-        TODO("Not yet implemented")
+        chatSocketService.sendMessage(message)
     }
 
     override fun observeMessages(): Flow<Message> {
-        TODO("Not yet implemented")
+        return chatSocketService.observeMessages()
     }
 
     override suspend fun closeSession() {
-        TODO("Not yet implemented")
+        chatSocketService.closeSession()
     }
 
     override suspend fun verifyCredentials(request: User): Resource<User> {
@@ -41,6 +49,6 @@ class CocoaRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAllMessages(): List<Message> {
-        TODO("Not yet implemented")
+        return messageService.getAllMessages()
     }
 }

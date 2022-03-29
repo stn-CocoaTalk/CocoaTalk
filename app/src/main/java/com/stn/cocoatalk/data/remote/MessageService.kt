@@ -1,13 +1,14 @@
 package com.stn.cocoatalk.data.remote
 
 import com.stn.cocoatalk.domain.model.Message
+import com.stn.cocoatalk.util.Constants
 
 interface MessageService {
 
     suspend fun getAllMessages(): List<Message>
 
     companion object {
-        const val BASE_URL = "http://172.30.1.19:8080"
+        const val BASE_URL = "http://${Constants.BASE_URL}"
     }
 
     sealed class Endpoints(val url: String) {

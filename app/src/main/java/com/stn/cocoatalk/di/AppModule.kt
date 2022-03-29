@@ -8,9 +8,7 @@ import com.stn.cocoatalk.data.remote.MessageService
 import com.stn.cocoatalk.data.remote.MessageServiceImpl
 import com.stn.cocoatalk.data.repository.CocoaRepositoryImpl
 import com.stn.cocoatalk.domain.repository.CocoaRepository
-import com.stn.cocoatalk.domain.usecase.AddUser
-import com.stn.cocoatalk.domain.usecase.CocoaUseCases
-import com.stn.cocoatalk.domain.usecase.GetUserByEmail
+import com.stn.cocoatalk.domain.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,8 +57,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRepository(loginService: LoginService): CocoaRepository {
-        return CocoaRepositoryImpl(loginService)
+    fun provideRepository(
+        loginService: LoginService,
+        messageService: MessageService,
+        chatSocketService: ChatSocketService
+    ): CocoaRepository {
+        return CocoaRepositoryImpl(loginService, messageService, chatSocketService)
     }
 
     @Provides
@@ -68,7 +70,12 @@ object AppModule {
     fun provideUseCases(repository: CocoaRepository): CocoaUseCases {
         return CocoaUseCases(
             GetUserByEmail = GetUserByEmail(repository),
-            AddUser = AddUser(repository)
+            AddUser = AddUser(repository),
+            CloseSession = CloseSession(repository),
+            GetAllMessages = GetAllMessages(repository),
+            InitSession = InitSession(repository),
+            ObserveMessages = ObserveMessages(repository),
+            SendMessage = SendMessage(repository)
         )
     }
 }

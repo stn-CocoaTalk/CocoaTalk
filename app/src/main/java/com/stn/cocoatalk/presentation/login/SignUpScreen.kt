@@ -2,8 +2,11 @@ package com.stn.cocoatalk.presentation.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarResult
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -16,6 +19,8 @@ import com.stn.cocoatalk.presentation.component.StandardTextField
 import com.stn.cocoatalk.presentation.util.Screen
 import com.stn.cocoatalk.ui.theme.PaddingMedium
 import com.stn.cocoatalk.ui.theme.PaddingSmall
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
@@ -23,6 +28,22 @@ fun SignUpScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.toast.collectLatest { message ->
+            if (message == "Success!") {
+                val result = scaffoldState.snackbarHostState.showSnackbar(
+                    message,
+                    actionLabel = "Sign In!"
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    navController.navigateUp()
+                }
+            } else {
+                scaffoldState.snackbarHostState.showSnackbar(message)
+            }
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState
@@ -72,8 +93,6 @@ fun SignUpScreen(
                 text = "Continue",
                 onClick = {
                     viewModel.signUp()
-                    navController.popBackStack()
-                    navController.navigate(Screen.InitialScreen.route)
                 }
             )
         }

@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface CocoaRepository {
 
+    suspend fun initSession(username: String)
+
     suspend fun sendMessage(message: String)
 
     fun observeMessages(): Flow<Message>

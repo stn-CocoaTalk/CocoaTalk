@@ -12,6 +12,8 @@ import com.stn.cocoatalk.presentation.login.InitialScreen
 import com.stn.cocoatalk.presentation.login.LoginScreen
 import com.stn.cocoatalk.presentation.login.SignUpScreen
 import com.stn.cocoatalk.presentation.splash.SplashScreen
+import com.stn.cocoatalk.presentation.username.UsernameScreen
+import com.stn.cocoatalk.presentation.util.AppState
 import com.stn.cocoatalk.presentation.util.Screen
 
 @Composable
@@ -39,8 +41,14 @@ fun Navigation() {
         composable(Screen.ChatListScreen.route) {
             ChatListScreen(navController)
         }
-        composable(Screen.ChatScreen.route) {
-            ChatScreen(username = "TEST")
+        composable(Screen.UsernameScreen.route) {
+            UsernameScreen(navController)
+        }
+        composable(
+            route = "${Screen.ChatScreen.route}/{username}",
+            arguments = listOf(navArgument("username") { NavType.StringType })
+        ) {
+            ChatScreen(navController, it)
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.stn.cocoatalk.presentation.login
 
+import androidx.compose.animation.Animatable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -7,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
@@ -14,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import com.stn.cocoatalk.R
 import com.stn.cocoatalk.presentation.component.AccentText
 import com.stn.cocoatalk.presentation.component.StandardTextField
 import com.stn.cocoatalk.presentation.util.Error
@@ -73,28 +76,45 @@ fun LoginScreen(
                                 fontSize = 20.sp,
                                 color = TextWhite.copy(alpha = 0.8f)
                             )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(PaddingMedium))
-                    StandardTextField(
-                        text = viewModel.password.value,
-                        hint = "Password",
-                        onValueChange = {
-                            viewModel.passwordChange(it)
-                        },
-                        keyboardType = KeyboardType.Password
-                    )
-                    Spacer(modifier = Modifier.height(PaddingMedium))
-                    AccentText(
-                        text = "Continue",
-                        onClick = {
-                            if(viewModel.verifyPassword()) {
-                                navController.navigate(Screen.ChatListScreen.route)
-                            } else {
-                                viewModel.showSnackBar(Error.InvalidPassword.message)
+                            if (user.email.isNotBlank()) {
+                                Spacer(modifier = Modifier.height(PaddingMedium))
+                                StandardTextField(
+                                    text = viewModel.password.value,
+                                    hint = "Password",
+                                    onValueChange = viewModel::passwordChange,
+                                    keyboardType = KeyboardType.Password
+                                )
+                                Spacer(modifier = Modifier.height(PaddingMedium))
+                                AccentText(
+                                    text = "Continue",
+                                    onClick = {
+                                        if (viewModel.verifyPassword()) {
+                                            viewModel.setStateAutorized()
+                                            navController.navigate(Screen.ChatListScreen.route)
+                                        } else {
+                                            viewModel.showSnackBar(Error.InvalidPassword.message)
+                                        }
+                                    }
+                                )
                             }
                         }
-                    )
+                    }
+                }
+            }
+            if (state.userIsNotExist){
+                Box(modifier = Modifier
+                    .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    IconButton(onClick = {
+                        navController.navigateUp()
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_refresh),
+                            contentDescription = "Return to previous screen.",
+                            tint = MaterialTheme.colors.primary
+                        )
+                    }
                 }
             }
             if (state.isLoading) {

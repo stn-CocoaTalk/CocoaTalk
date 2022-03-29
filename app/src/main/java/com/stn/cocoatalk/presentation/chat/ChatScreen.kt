@@ -27,119 +27,130 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ChatScreen(
-    username: String?,
+    navController: NavController,
+    navBackStackEntry: NavBackStackEntry,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
+    val username = navBackStackEntry.arguments?.getString("username")
     val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
         viewModel.toastEvent.collectLatest { message ->
             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         }
     }
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(key1 = lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if(event == Lifecycle.Event.ON_START) {
-                viewModel.connectToChat()
-            } else if (event == Lifecycle.Event.ON_STOP) {
-                viewModel.disconnect()
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-    val state = viewModel.state.value
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            reverseLayout = true
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(32.dp))
-            }
-            items(state.messages) { message ->
-                val isOwnMessage = message.username == username
-                Box(
-                    contentAlignment = if (isOwnMessage) {
-                        Alignment.CenterEnd
-                    } else Alignment.CenterStart,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .width(200.dp)
-                            .drawBehind {
-                                val cornerRadius = 10.dp.toPx()
-                                val triangleHeight = 20.dp.toPx()
-                                val triangleWidth = 25.dp.toPx()
-                                val trianglePath = Path().apply {
-                                    if (isOwnMessage) {
-                                        moveTo(size.width, size.height - cornerRadius)
-                                        lineTo(size.width, size.height + triangleHeight)
-                                        lineTo(size.width - triangleWidth, size.height - cornerRadius)
-                                        close()
-                                    } else {
-                                        moveTo(0f, size.height - cornerRadius)
-                                        lineTo(0f, size.height + triangleHeight)
-                                        lineTo(triangleWidth, size.height - cornerRadius)
-                                        close()
-                                    }
-                                }
-                                drawPath(
-                                    path = trianglePath,
-                                    color = if (isOwnMessage) Color.Green else Color.DarkGray
-                                )
-                            }
-                            .background(
-                                color = if (isOwnMessage) Color.Green else Color.DarkGray,
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = message.username,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = message.text,
-                            color = Color.White
-                        )
-                        Text(
-                            text = message.timestamp,
-                            color = Color.White,
-                            modifier = Modifier.align(Alignment.End)
-                        )
-                    }
+
+    username?.let {
+        val lifecycleOwner = LocalLifecycleOwner.current
+        DisposableEffect(key1 = lifecycleOwner) {
+            val observer = LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_START) {
+                    viewModel.connectToChat(username)
+                } else if (event == Lifecycle.Event.ON_STOP) {
+                    viewModel.disconnect()
                 }
-                Spacer(modifier = Modifier.height(32.dp))
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
             }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth()
+        val state = viewModel.state.value
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            TextField(
-                value = viewModel.messageText.value,
-                onValueChange = viewModel::onMessageChange,
-                modifier = Modifier.weight(1f)
-            )
-            IconButton(onClick = viewModel::sendMessage) {
-                Icon(
-                    imageVector = Icons.Default.Send,
-                    contentDescription = "전송"
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                reverseLayout = true
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+                items(state.messages) { message ->
+                    val isOwnMessage = message.username == username
+                    Box(
+                        contentAlignment = if (isOwnMessage) {
+                            Alignment.CenterEnd
+                        } else Alignment.CenterStart,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .width(200.dp)
+                                .drawBehind {
+                                    val cornerRadius = 10.dp.toPx()
+                                    val triangleHeight = 20.dp.toPx()
+                                    val triangleWidth = 25.dp.toPx()
+                                    val trianglePath = Path().apply {
+                                        if (isOwnMessage) {
+                                            moveTo(size.width, size.height - cornerRadius)
+                                            lineTo(size.width, size.height + triangleHeight)
+                                            lineTo(
+                                                size.width - triangleWidth,
+                                                size.height - cornerRadius
+                                            )
+                                            close()
+                                        } else {
+                                            moveTo(0f, size.height - cornerRadius)
+                                            lineTo(0f, size.height + triangleHeight)
+                                            lineTo(triangleWidth, size.height - cornerRadius)
+                                            close()
+                                        }
+                                    }
+                                    drawPath(
+                                        path = trianglePath,
+                                        color = if (isOwnMessage) Color.Green else Color.DarkGray
+                                    )
+                                }
+                                .background(
+                                    color = if (isOwnMessage) Color.Green else Color.DarkGray,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = message.username,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                text = message.text,
+                                color = Color.White
+                            )
+                            Text(
+                                text = message.timestamp,
+                                color = Color.White,
+                                modifier = Modifier.align(Alignment.End)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                TextField(
+                    value = viewModel.messageText.value,
+                    onValueChange = viewModel::onMessageChange,
+                    modifier = Modifier.weight(1f)
                 )
+                IconButton(onClick = viewModel::sendMessage) {
+                    Icon(
+                        imageVector = Icons.Default.Send,
+                        contentDescription = "전송"
+                    )
+                }
             }
         }
     }
