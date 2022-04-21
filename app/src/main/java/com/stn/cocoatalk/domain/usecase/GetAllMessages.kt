@@ -11,10 +11,10 @@ import javax.inject.Inject
 class GetAllMessages @Inject constructor(
     private val repository: CocoaRepository
 ) {
-    operator fun invoke(): Flow<Resource<List<Message>>> = flow {
+    operator fun invoke(sender: String, receiver: String): Flow<Resource<List<Message>>> = flow {
         try {
             emit(Resource.Loading())
-            val result = repository.getAllMessages()
+            val result = repository.getAllMessages(sender, receiver)
             emit(Resource.Success(result))
         } catch (e: Exception) {
             emit(Resource.Error(e.localizedMessage))

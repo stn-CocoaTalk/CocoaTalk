@@ -1,4 +1,4 @@
-package com.stn.cocoatalk.presentation.chat
+package com.stn.cocoatalk.presentation.chat.chatRoom
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -29,6 +29,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import com.stn.cocoatalk.presentation.chat.ChatViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -77,7 +78,7 @@ fun ChatScreen(
                     Spacer(modifier = Modifier.height(32.dp))
                 }
                 items(state.messages) { message ->
-                    val isOwnMessage = message.username == username
+                    val isOwnMessage = message.sendUser.username == username
                     Box(
                         contentAlignment = if (isOwnMessage) {
                             Alignment.CenterEnd
@@ -119,7 +120,7 @@ fun ChatScreen(
                                 .padding(8.dp)
                         ) {
                             Text(
-                                text = message.username,
+                                text = if (isOwnMessage) message.sendUser.username else message.receiveUser.username,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )

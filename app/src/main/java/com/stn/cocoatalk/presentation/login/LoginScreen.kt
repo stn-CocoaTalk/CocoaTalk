@@ -90,7 +90,7 @@ fun LoginScreen(
                                     onClick = {
                                         if (viewModel.verifyPassword()) {
                                             viewModel.setStateAutorized()
-                                            navController.navigate(Screen.ChatListScreen.route)
+                                            navController.navigate("${Screen.ChatListScreen.route}/${viewModel.state.value}")
                                         } else {
                                             viewModel.showSnackBar(Error.InvalidPassword.message)
                                         }

@@ -2,13 +2,9 @@ package com.stn.cocoatalk.presentation.chat
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stn.cocoatalk.data.remote.ChatSocketService
-import com.stn.cocoatalk.data.remote.MessageService
 import com.stn.cocoatalk.domain.usecase.CocoaUseCases
-import com.stn.cocoatalk.presentation.util.AppState
 import com.stn.cocoatalk.presentation.util.Error
 import com.stn.cocoatalk.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,14 +23,14 @@ class ChatViewModel @Inject constructor(
     private val _messageText = mutableStateOf("")
     val messageText: State<String> = _messageText
 
-    private val _state = mutableStateOf(AppState())
-    val state: State<AppState> = _state
+    private val _state = mutableStateOf(ChatState())
+    val state: State<ChatState> = _state
 
     private val _toastEvent = MutableSharedFlow<String>()
     val toastEvent = _toastEvent.asSharedFlow()
 
     fun connectToChat(username: String) {
-        getAllMessages()
+        //getAllMessages()
         useCases.InitSession(username).onEach { result ->
             when(result) {
                 is Resource.Success -> {
@@ -70,12 +66,12 @@ class ChatViewModel @Inject constructor(
         useCases.CloseSession()
     }
 
-    fun getAllMessages() {
-        useCases.GetAllMessages().onEach { result ->
-            when(result) {
+    fun getAllMessages(username: String) {
+        useCases.GetAllMessages(username).onEach { result ->
+            when (result) {
                 is Resource.Success -> {
                     _state.value = state.value.copy(
-                        messages = result.data!!
+                        messages = result.data!!,
                     )
                 }
                 is Resource.Error -> {
@@ -90,7 +86,7 @@ class ChatViewModel @Inject constructor(
                     )
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun sendMessage() {

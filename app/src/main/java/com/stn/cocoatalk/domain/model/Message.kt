@@ -2,6 +2,7 @@ package com.stn.cocoatalk.domain.model
 
 data class Message(
     val text: String,
-    val username: String,
+    val sendUser: User,
+    val receiveUser: User,
     val timestamp: String
 )

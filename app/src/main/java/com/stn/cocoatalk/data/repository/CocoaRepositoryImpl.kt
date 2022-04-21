@@ -48,7 +48,7 @@ class CocoaRepositoryImpl @Inject constructor(
         return loginService.getUserByEmail(email)
     }
 
-    override suspend fun getAllMessages(): List<Message> {
-        return messageService.getAllMessages()
+    override suspend fun getAllMessages(sender: String, receiver: String): List<Message> {
+        return messageService.getAllMessages(sender, receiver)
     }
 }

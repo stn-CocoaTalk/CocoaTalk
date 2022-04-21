@@ -1,15 +1,16 @@
 package com.stn.cocoatalk.presentation.login
 
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stn.cocoatalk.data.remote.dto.InvalidUserException
 import com.stn.cocoatalk.data.remote.dto.UserDto
 import com.stn.cocoatalk.domain.usecase.CocoaUseCases
-import com.stn.cocoatalk.presentation.util.AppState
 import com.stn.cocoatalk.presentation.util.Error
+import com.stn.cocoatalk.util.AppState
 import com.stn.cocoatalk.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -21,8 +22,7 @@ class LoginViewModel @Inject constructor(
     private val useCases: CocoaUseCases
 ): ViewModel() {
 
-    private val _inputText = mutableStateOf("")
-    val inputText: State<String> = _inputText
+    var inputText by mutableStateOf("")
 
     private val _username = mutableStateOf("")
     val username: State<String> = _username
@@ -36,37 +36,36 @@ class LoginViewModel @Inject constructor(
     private val _toast = MutableSharedFlow<String>()
     val toast: SharedFlow<String> = _toast.asSharedFlow()
 
-    private val _state = mutableStateOf(AppState())
-    val state: State<AppState> = _state
+    private val _state = mutableStateOf(LoginState())
+    val state: State<LoginState> = _state
 
     fun setStateAutorized() {
-        _state.value = state.value.copy(
-            authorized = true
-        )
+        AppState.authorized = true
     }
 
     fun verifyEmail(): Boolean {
-        return _inputText.value.isNotBlank()
+        return inputText.isNotBlank()
     }
 
     fun getUserByEmail(email: String) {
         useCases.GetUserByEmail(email).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _state.value = AppState(
+                    _state.value = LoginState(
                         currentUser = result.data,
                         isLoading = false
                     )
                     _state.value.userIsNotExist()
+                    AppState.currentUser = result.data!!
                 }
                 is Resource.Error -> {
-                    _state.value = AppState(
+                    _state.value = LoginState(
                         isLoading = false
                     )
                     _toast.emit(result.message ?: Error.UnknownError.message)
                 }
                 is Resource.Loading -> {
-                    _state.value = AppState(
+                    _state.value = LoginState(
                         isLoading = true
                     )
                 }
@@ -85,19 +84,19 @@ class LoginViewModel @Inject constructor(
             useCases.AddUser(user).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        _state.value = AppState(
+                        _state.value = LoginState(
                             isLoading = false
                         )
                         _toast.emit("Success!")
                     }
                     is Resource.Error -> {
-                        _state.value = AppState(
+                        _state.value = LoginState(
                             isLoading = false
                         )
                         _toast.emit(result.message ?: Error.UnknownError.message)
                     }
                     is Resource.Loading -> {
-                        _state.value = AppState(
+                        _state.value = LoginState(
                             isLoading = true
                         )
                     }

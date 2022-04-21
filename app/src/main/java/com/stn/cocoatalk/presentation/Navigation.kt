@@ -6,14 +6,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.stn.cocoatalk.presentation.chat.ChatScreen
-import com.stn.cocoatalk.presentation.chatlist.ChatListScreen
+import com.stn.cocoatalk.presentation.chat.chatRoom.ChatScreen
+import com.stn.cocoatalk.presentation.chat.chatList.ChatListScreen
 import com.stn.cocoatalk.presentation.login.InitialScreen
 import com.stn.cocoatalk.presentation.login.LoginScreen
 import com.stn.cocoatalk.presentation.login.SignUpScreen
 import com.stn.cocoatalk.presentation.splash.SplashScreen
 import com.stn.cocoatalk.presentation.username.UsernameScreen
-import com.stn.cocoatalk.presentation.util.AppState
 import com.stn.cocoatalk.presentation.util.Screen
 
 @Composable

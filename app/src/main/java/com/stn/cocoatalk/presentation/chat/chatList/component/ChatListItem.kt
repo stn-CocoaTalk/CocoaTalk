@@ -1,4 +1,4 @@
-package com.stn.cocoatalk.presentation.chatlist
+package com.stn.cocoatalk.presentation.chat.chatList
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

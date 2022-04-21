@@ -38,7 +38,7 @@ fun SplashScreen(
         )
         delay(Constants.SPLASH_SCREEN_DELAY)
         navController.popBackStack()
-        navController.navigate(Screen.InitialScreen.route)
+        navController.navigate(Screen.ChatListScreen.route)
     }
     Box(
         modifier = Modifier.fillMaxSize(),

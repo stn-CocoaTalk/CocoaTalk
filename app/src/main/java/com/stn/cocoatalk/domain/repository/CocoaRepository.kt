@@ -24,5 +24,5 @@ interface CocoaRepository {
 
     suspend fun getUserByEmail(email: String): UserDto
 
-    suspend fun getAllMessages(): List<Message>
+    suspend fun getAllMessages(sender: String, receiver: String): List<Message>
 }

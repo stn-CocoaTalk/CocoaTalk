@@ -1,43 +1,46 @@
-package com.stn.cocoatalk.presentation.chatlist
+package com.stn.cocoatalk.presentation.chat.chatList
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.stn.cocoatalk.presentation.component.LabelTextField
+import com.stn.cocoatalk.presentation.chat.ChatViewModel
 import com.stn.cocoatalk.presentation.util.Screen
 import com.stn.cocoatalk.ui.theme.PaddingLarge
 import com.stn.cocoatalk.ui.theme.PaddingSmall
+import com.stn.cocoatalk.util.AppState
 import kotlinx.coroutines.flow.collectLatest
-import javax.inject.Inject
 
 @Composable
 fun ChatListScreen (
     navController: NavController,
-    viewModel: ChatListViewModel = hiltViewModel()
+    viewModel: ChatViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
     val state = viewModel.state.value
+    val user = AppState.currentUser
 
-    LaunchedEffect(true) {
-        viewModel.getAllMessages()
-        viewModel.toast.collectLatest { message ->
+    LaunchedEffect(key1 = AppState.authorized) {
+        if (AppState.authorized.not()) navController.navigate(Screen.InitialScreen.route)
+    }
+
+    LaunchedEffect(key1 = true) {
+        if (user != null) {
+            viewModel.getAllMessages(user.username)
+        }
+        viewModel.toastEvent.collectLatest { message ->
             scaffoldState.snackbarHostState.showSnackbar(message)
         }
     }

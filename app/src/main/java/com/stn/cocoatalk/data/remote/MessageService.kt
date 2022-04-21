@@ -5,7 +5,7 @@ import com.stn.cocoatalk.util.Constants
 
 interface MessageService {
 
-    suspend fun getAllMessages(): List<Message>
+    suspend fun getAllMessages(sender: String, receiver: String): List<Message>
 
     companion object {
         const val BASE_URL = "http://${Constants.BASE_URL}"

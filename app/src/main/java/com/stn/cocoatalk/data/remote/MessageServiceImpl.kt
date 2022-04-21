@@ -9,9 +9,10 @@ class MessageServiceImpl(
     private val client: HttpClient
 ): MessageService {
 
-    override suspend fun getAllMessages(): List<Message> {
+    override suspend fun getAllMessages(sender: String, receiver: String): List<Message> {
         return try {
-            client.get<List<MessageDto>>(MessageService.Endpoints.GetAllMessages.url)
+            client.get<List<MessageDto>>(MessageService.Endpoints.GetAllMessages.url +
+                    "?sender=" + sender + "&receiver=" + receiver)
                 .map { it.toMessage() }
         } catch (e: Exception) {
             emptyList()
